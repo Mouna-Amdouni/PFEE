@@ -62,6 +62,36 @@ class Association
      */
     private $valid;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $budget;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $domaineAssociation;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $siteWeb;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dateFondation;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $telephone;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $president;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -177,6 +207,78 @@ class Association
     public function isValid(): ?bool
     {
         return $this->valid;
+    }
+
+    public function getBudget(): ?float
+    {
+        return $this->budget;
+    }
+
+    public function setBudget(?float $budget): self
+    {
+        $this->budget = $budget;
+
+        return $this;
+    }
+
+    public function getDomaineAssociation(): ?string
+    {
+        return $this->domaineAssociation;
+    }
+
+    public function setDomaineAssociation(?string $domaineAssociation): self
+    {
+        $this->domaineAssociation = $domaineAssociation;
+
+        return $this;
+    }
+
+    public function getSiteWeb(): ?string
+    {
+        return $this->siteWeb;
+    }
+
+    public function setSiteWeb(?string $siteWeb): self
+    {
+        $this->siteWeb = $siteWeb;
+
+        return $this;
+    }
+
+    public function getDateFondation(): ?\DateTimeInterface
+    {
+        return $this->dateFondation;
+    }
+
+    public function setDateFondation(?\DateTimeInterface $dateFondation): self
+    {
+        $this->dateFondation = $dateFondation;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getPresident(): ?string
+    {
+        return $this->president;
+    }
+
+    public function setPresident(?string $president): self
+    {
+        $this->president = $president;
+
+        return $this;
     }
 
 }

@@ -25,6 +25,10 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Column(type="integer")
      */
     private $id;
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="utilisateur")
+     */
+    private $messages;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -104,9 +108,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $associations;
 
-
+    /**
+     * @ORM\OneToOne(targetEntity=Conversation::class, mappedBy="utilisateur", cascade={"persist", "remove"})
+     */
+    private $conversation;
     public function __construct()
-    {
+    {        $this->messages = new ArrayCollection();
+
         $this->blogPosts = new ArrayCollection();
         $this->blogPostsCreated = new ArrayCollection();
         $this->historiques = new ArrayCollection();
@@ -457,4 +465,52 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): self
+    {
+        $this->conversation = $conversation;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUtilisateur = null === $conversation ? null : $this;
+        if ($conversation->getUtilisateur() !== $newUtilisateur) {
+            $conversation->setUtilisateur($newUtilisateur);
+        }
+
+        return $this;
+    }
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getUtilisateur() === $this) {
+                $message->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

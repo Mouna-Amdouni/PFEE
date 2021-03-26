@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Controller;
+use App\Form\AssociationAjoutInfoType;
+use App\Form\AssociationEditFormType;
+use App\Form\AssociationEditPAFormType;
 use App\Services\UploadHelper;
 
 use App\Entity\Association;
@@ -46,12 +49,13 @@ private $entityManager;
     /**
      * @Route("/", name="association_index", methods={"GET"})
      * @IsGranted("ROLE_SUPERUSER")
+
      */
     public function index(AssociationRepository $associationRepository): Response
     {  $associations=$this->associationRepository->findAll();
 //        return $this->render("proprietaireAssociation/asoociation/associationform.html.twig", ['associationform'=>$form->createView(),
 
-        return $this->render('proprietaireAssociation/association/association.html.twig', [
+        return $this->render('admin/association/association.html.twig', [
             'associations' => $associationRepository->findAll(),
         ]);
     }
@@ -153,7 +157,7 @@ private $entityManager;
             return $this->redirectToRoute('association_index');
         }
 
-        return $this->render("proprietaireAssociation/association/associationform.html.twig", ['associationform'=>$form->createView(),
+        return $this->render("admin/association/associationform.html.twig", ['associationform'=>$form->createView(),
             'associations' => $associationRepository->findAll(),
             'form' => $form->createView(),
 
@@ -183,32 +187,37 @@ private $entityManager;
     /**
      * @Route("/{id}/edit", name="association_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Association $association): Response
+    public function edit(Request $request, AssociationRepository $associationRepository,AssociationEditFormType $associationEditFormType,Association $association): Response
     {
-        $form = $this->createForm(AssociationType::class, $association);
+        $form = $this->createForm(AssociationEditFormType::class, $association);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var  Association $association */
-            $logo=$association->getLogo();
-            if($association->getLogo()!=null){
-                $association->setLogo(
-                    $this->getParameter('images_directory') . '/' . $association->getLogo()
+            $file=$form->get('logo')->getData();
+            $fileName=md5(uniqid()).'.'.$file->guessExtension();
 
-
+            try {
+                $file->move(
+                    $this->getParameter('images_directory'),
+                    $fileName
                 );
-            }else{ // aucune nouvelle image envoyée
-                //on recupère l'ancienne image
-                $association->setLogo( $logo );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
             }
+            $association->setLogo($fileName);
 
-            $this->getDoctrine()->getManager()->flush();
+
+
+$this->entityManager->persist($association);
+            $this->entityManager->flush();
+            $this->addFlash("success","Post modifié");
 
             return $this->redirectToRoute('association_index');
         }
 
-        return $this->render('association/edit.html.twig', [
-            'association' => $association,
+        return $this->render("admin/association/associationform.html.twig", ['associationform'=>$form->createView(),
+            'associations' => $associationRepository->findAll(),
             'form' => $form->createView(),
+
         ]);
     }
 
@@ -389,7 +398,7 @@ private $entityManager;
 
         }
 
-        return $this->render("proprietaireAssociation/association/associationform.html.twig", ['associationform'=>$form->createView(),
+        return $this->render("admin/association/associationform.html.twig", ['associationform'=>$form->createView(),
             'associations' => $associationRepository->findAll(),
             'form' => $form->createView(),
 
@@ -443,7 +452,7 @@ private $entityManager;
             $this->addFlash("success","Association ajouté");
             return $this->redirectToRoute("association_index");
         }
-        return $this->render("proprietaireAssociation/association/associationform.html.twig",["associationform"=>$form->createView()]);
+        return $this->render("admin/association/associationform.html.twig",["associationform"=>$form->createView()]);
     }
     /**
      * @Route("/association/changevalidite/{id}",name="changevalidite_association",methods={"post"})
@@ -497,8 +506,261 @@ private $entityManager;
             return $this->redirectToRoute("association_index");
         }
 
-        return $this->render("proprietaireAssociation/association/associationform.html.twig",["associationform"=>$form->createView()]);
+        return $this->render("admin/association/associationform.html.twig",["associationform"=>$form->createView()]);
     }
+
+//////////////////////////////////////// Proprietaire association/////////////////////////////////////////////////////
+///
+///
+///
+    /**
+     * @Route("/PA", name="association_indexP", methods={"GET"})
+     * @IsGranted("ROLE_PASSOCIATION")
+
+     */
+    public function indexP(AssociationRepository $associationRepository): Response
+    {  $associations=$this->associationRepository->findAll();
+//        return $this->render("proprietaireAssociation/asoociation/associationform.html.twig", ['associationform'=>$form->createView(),
+
+        return $this->render('proprietaireAssociation/association/association.html.twig', [
+            'associations' => $associationRepository->findAll(),
+        ]);
+    }
+
+
+
+
+    /**
+     * @Route("/newP", name="association_newP", methods={"GET","POST"})
+     */
+    public function newP(AssociationRepository $associationRepository,Request $request,EntityManagerInterface $manager): Response
+    {
+        $association = new Association();
+        $form = $this->createFormBuilder($association);
+
+        $form=$this->createFormBuilder($association)
+            ->add('UserA')
+
+            ->add('titre',
+                TextType::class, [
+                    'required' => true,
+                    'label' => "Entrez le nom de votre association",
+                    'attr' => ['class' => 'form-control']
+                ])
+            ->add('siege',
+                TextType::class, [
+                    'required' => true,
+                    'label' => "Entrez le siege de votre association",
+                    'attr' => ['class' => 'form-control']
+                ])
+            ->add('adresse',
+                TextType::class, [
+                    'required' => true,
+                    'label' => "Entrez l\'adresse de votre association",
+                    'attr' => ['class' => 'form-control']
+                ])
+            ->add('nombreMembre',
+                TextType::class, [
+                    'required' => true,
+                    'label' => "Entrez le nombre des membres de votre association",
+                    'attr' => ['class' => 'form-control']
+                ])
+            ->add('logo',FileType::class,['label'=>'Charger votre logo d\'association' ])
+            ->add('but', TextareaType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => "9",
+                    'cols' => "45"
+                ],
+                'label' => "Entrez le but de votre assocition "
+            ])
+            ->getForm();
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file=$form->get('logo')->getData();
+            $fileName=md5(uniqid()).'.'.$file->guessExtension();
+            try {
+                $file->move(
+                    $this->getParameter('images_directory'),
+                    $fileName
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+            $association->setLogo($fileName);
+            $association=$form->getData();
+            $association->setValid(true);
+            $association->setDeleted(false);
+
+//            $entityManager = $this->getDoctrine()->getManager();
+            $manager->persist($association);
+            $manager->flush();
+            $this->addFlash('success', 'Association  bien été enregistrée.');
+
+            return $this->redirectToRoute('association_index');
+        }
+
+        return $this->render("admin/association/associationform.html.twig", ['associationform'=>$form->createView(),
+            'associations' => $associationRepository->findAll(),
+            'form' => $form->createView(),
+
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * @Route("/{id}/editP", name="association_editP", methods={"GET","POST"})
+     */
+    public function editP(Request $request, AssociationRepository $associationRepository,AssociationEditFormType $associationEditFormType,Association $association): Response
+    {
+        $form = $this->createForm(AssociationEditPAFormType::class, $association);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file=$form->get('logo')->getData();
+            $fileName=md5(uniqid()).'.'.$file->guessExtension();
+
+            try {
+                $file->move(
+                    $this->getParameter('images_directory'),
+                    $fileName
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+            $association->setLogo($fileName);
+
+
+
+            $this->entityManager->persist($association);
+            $this->entityManager->flush();
+            $this->addFlash("success","Association modifié");
+
+            return $this->redirectToRoute('association_indexP');
+        }
+
+        return $this->render("admin/association/associationform.html.twig", ['associationform'=>$form->createView(),
+            'associations' => $associationRepository->findAll(),
+            'form' => $form->createView(),
+
+        ]);
+    }
+    /**
+     * @Route("/{id}/ajout", name="association_ajoutInfo", methods={"GET","POST"})
+     */
+    public function ajoutInformation(Request $request, AssociationRepository $associationRepository,AssociationEditFormType $associationEditFormType,Association $association): Response
+    {
+        $form = $this->createForm(AssociationAjoutInfoType::class, $association);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+
+
+
+            $this->entityManager->persist($association);
+            $this->entityManager->flush();
+            $this->addFlash("success","Information ajoutée avec succé");
+
+            return $this->redirectToRoute('association_indexP');
+        }
+
+        return $this->render("admin/association/associationform.html.twig", ['associationform'=>$form->createView(),
+            'associations' => $associationRepository->findAll(),
+            'form' => $form->createView(),
+
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/P", name="association_deleteP", methods={"POST"})
+     */
+    public function deleteP(Request $request, Association $association): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$association->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($association);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('association_indexP');
+    }
+
+
+
+
+    /**
+     * @Route("/associationP/edit/{id}",name="edit_associationP")
+     * @IsGranted("ROLE_PASSOCIATION")
+     */
+    public function editCategorieP(Association $association ,Request $request){
+        $form = $this->createForm(AssociationType::class,$association);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $association->setValid(true)
+                ->setDeleted(false);
+            $this->entityManager->persist($association);
+            $this->entityManager->flush();
+            $this->addFlash("success","Association ajouté");
+            return $this->redirectToRoute("association_indexP");
+        }
+        return $this->render("admin/association/associationform.html.twig",["associationform"=>$form->createView()]);
+    }
+
+
+
+
+    /**
+     * @Route("/associationP/edit1/{id}",name="editt_associationsP")
+     * @IsGranted("ROLE_PASSOCIATION")
+     */
+    public function editaP(Association $association ,Request $request){
+        $association = new Association();
+        $association
+            ->setTitre($association->getTitre())
+            ->setSiege($association->getSiege())
+            ->setBut($association->getBut())
+            ->setLogo($association->getLogo())
+            ->setAdresse($association->getAdresse())
+            ->setNombreMembre ($association->getNombreMembre());
+        $this->entityManager->persist($association);
+
+        $form = $this->createForm(AssociationType::class,$association);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            if ($form["logo"]->getData()){
+                $blogImage = $form["logo"]->getData();
+                $image= $this->uploadHelper->uploadBlogImage($blogImage,$association->getTitre());
+                $association->setLogo($image->getFilename());
+            }
+
+            /* If want to add more specific img validation
+             * if (!$this->uploadHelper->validateImg($blogImage)){
+
+            }*/
+            $this->entityManager->persist($association);
+            $this->entityManager->flush();
+            $this->addFlash("success","Association modifiée");
+            return $this->redirectToRoute("association_indexP");
+        }
+
+        return $this->render("admin/association/associationform.html.twig",["associationform"=>$form->createView()]);
+    }
+
+
+
+
 
 
 
