@@ -41,6 +41,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         $this->login_route = $request->attributes->get('_route');
         return  ($request->attributes->get('_route')==='app_login')
+//        return  ($request->attributes->get('_route')==='index10')
+
             && $request->isMethod('POST');
     }
 
@@ -81,7 +83,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(),$providerKey)){
             return new RedirectResponse($targetPath);
         }
-        return new RedirectResponse($this->router->generate("app_admin_index"));
+        return new RedirectResponse($this->router->generate("index10"));
     }
 
     protected function getLoginUrl()

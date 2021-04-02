@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}nouveau forum{% endblock %}
+
+{% block body %}
+
+
+<div class="col-sm-12" id="breadcrumb">
+    >
+    <a href="{{ path('forum') }}"><span>Forum</span></a>
+    >
+    <span>Créer un nouveau forum</span>
+</div>
+
+
+<div class="col-xl-12">
+    <h1 class="page-name">Créer un nouveau forum</h1>
+</div>
+
+<div class="col-md-12" id="pdetails-form">
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+</div>
+
+{% endblock %}

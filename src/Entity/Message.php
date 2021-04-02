@@ -2,108 +2,131 @@
 
 namespace App\Entity;
 
-use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=MessageRepository::class)
+ * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
  */
 class Message
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $message;
+//    /**
+//     * @ORM\Column(type="integer")
+//     */
+//    private $idTopic;
+//
+//    /**
+//     * @ORM\Column(type="integer")
+//     */
+//    private $idUser;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="datetime")
      */
-    private $date_mess;
+    private $publicationDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Administration::class, inversedBy="messages")
+     * @ORM\Column(type="text")
      */
-    private $admin;
+    private $content;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Topic::class, inversedBy="messages")
+     */
+    private $idTopic;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="messages")
      */
-    private $utilisateur;
+    private $idUser;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=conversation::class, inversedBy="messages")
-     */
-    private $conversation;
+  
 
     public function getId(): ?int
     {
         return $this->id;
     }
+//
+//    public function getIdTopic(): ?int
+//    {
+//        return $this->idTopic;
+//    }
+//
+//    public function setIdTopic(int $idTopic): self
+//    {
+//        $this->idTopic = $idTopic;
+//
+//        return $this;
+//    }
+//
+//    public function getIdUser(): ?int
+//    {
+//        return $this->idUser;
+//    }
+//
+//    public function setIdUser(int $idUser): self
+//    {
+//        $this->idUser = $idUser;
+//
+//        return $this;
+//    }
 
-    public function getMessage(): ?string
+    public function getPublicationDate(): ?\DateTimeInterface
     {
-        return $this->message;
+        return $this->publicationDate;
     }
 
-    public function setMessage(?string $message): self
+    public function setPublicationDate(\DateTimeInterface $publicationDate): self
     {
-        $this->message = $message;
+        $this->publicationDate = $publicationDate;
 
         return $this;
     }
 
-    public function getDateMess(): ?\DateTimeInterface
+    public function getContent(): ?string
     {
-        return $this->date_mess;
+        return $this->content;
     }
 
-    public function setDateMess(?\DateTimeInterface $date_mess): self
+    public function setContent(string $content): self
     {
-        $this->date_mess = $date_mess;
+        $this->content = $content;
+
+        return $this;
+    }
+    public function __toString() {
+        return $this->content;
+    }
+
+    public function getIdTopic(): ?Topic
+    {
+        return $this->idTopic;
+    }
+
+    public function setIdTopic(?Topic $idTopic): self
+    {
+        $this->idTopic = $idTopic;
 
         return $this;
     }
 
-    public function getAdmin(): ?administration
+    public function getIdUser(): ?User
     {
-        return $this->admin;
+        return $this->idUser;
     }
 
-    public function setAdmin(?administration $admin): self
+    public function setIdUser(?User $idUser): self
     {
-        $this->admin = $admin;
+        $this->idUser = $idUser;
 
         return $this;
     }
 
-    public function getUtilisateur(): ?User
-    {
-        return $this->utilisateur;
-    }
 
-    public function setUtilisateur(?User $utilisateur): self
-    {
-        $this->utilisateur = $utilisateur;
-
-        return $this;
-    }
-
-    public function getConversation(): ?conversation
-    {
-        return $this->conversation;
-    }
-
-    public function setConversation(?conversation $conversation): self
-    {
-        $this->conversation = $conversation;
-
-        return $this;
-    }
 }

@@ -43,6 +43,10 @@ class SecurityController extends AbstractController
             'last_username' => $lastUsername,
             'error' => $error
         ]);
+//        return $this->redirectToRoute('index10', [
+//            'last_username' => $lastUsername,
+//            'error' => $error
+//        ]);
     }
     /**
      * @Route("/register",name="register")

@@ -18,5 +18,11 @@ class AdminController extends AbstractController
     public function index(){
         return $this->render("admin/main.html.twig");
     }
+    /**
+     * @Route("/Bienvenue",name="index10")
+     */
+    public function index20(){
+        return $this->render("admin/bars.html.twig");
+    }
 
 }

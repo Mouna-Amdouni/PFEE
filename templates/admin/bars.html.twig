@@ -2,6 +2,8 @@
 
 
 {% block bars %}
+    {% if is_granted('ROLE_ADMIN') or is_granted("ROLE_PASSOCIATION") or is_granted("ROLE_CONSULTANT")  %}
+
     <div class="col-md-3 left_col menu_fixed">
         <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
@@ -33,8 +35,18 @@
                         <li><a href="{{ path('app_admin_index') }}"><i class="fa fa-home"></i> {{ "backend.menu.home"|trans }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link js-scroll" href="{{path('contact')}}"><i class="far fa-comment-dots"></i> Contact</a>
+{#                            <a class="nav-link js-scroll" href="{{path('contact')}}"><i class="far fa-comment-dots"></i> Contact</a>#}
                         </li>
+
+
+{#                            <li><a><i class="fa fa-user"></i> {{ "backend.menu.user"|trans }} <span class="fa fa-chevron-down"></span></a>#}
+{#                                <ul class="nav child_menu">#}
+{#                                    <li><a href="{{ path('forums') }}">{{ "backend.menu.manage"|trans }}</a></li>#}
+{#                                </ul>#}
+{#                            </li>#}
+
+
+
                         {% if is_granted("ROLE_SUPERUSER") %}
                         <li><a><i class="fa fa-user"></i> {{ "backend.menu.user"|trans }} <span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu">
@@ -51,11 +63,29 @@
                             </li>
 
                         {% endif %}
+                        {% if is_granted("ROLE_CONSULTANT") %}
+
+                            <li><a><i class="fa fa-user"></i> Chats <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a href="{{ path('forumsall') }}">{{ "backend.menu.manage"|trans }} vos messages</a></li>
+                                </ul>
+                            </li>
+
+                        {% endif %}
                         {% if is_granted("ROLE_PASSOCIATION") %}
 
                             <li><a><i class="fa fa-user"></i> {{ "backend.menu.association"|trans }} <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
                                     <li><a href="{{ path('association_index') }}">{{ "backend.menu.manage"|trans }} vos associations</a></li>
+                                </ul>
+                            </li>
+
+                        {% endif %}
+                        {% if is_granted("ROLE_PASSOCIATION") %}
+
+                            <li><a><i class="fa fa-user"></i>Chatter avec un consultant <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a href="{{ path('forums') }}">{{ "backend.menu.manage"|trans }} vos associations</a></li>
                                 </ul>
                             </li>
 
@@ -127,5 +157,6 @@
         {% block contenpage %}{% endblock %}
     </div>
     <!-- /page content -->
+                        {%  endif %}
 
 {% endblock %}

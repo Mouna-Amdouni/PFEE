@@ -1,0 +1,43 @@
+
+ {% block stylesheets %}
+<link href="{{ asset('vendors/allChatsConsultant.css') }}" rel="stylesheet">
+{% endblock %}
+{% block contenpage %}
+    <h1>bnj {{ app.user.id }}</h1>
+
+    {% for t in topics  %}
+
+
+
+
+
+
+
+
+
+
+
+                <div class="row">
+                    <div class="col-md-12 col-lg-6">
+                        <div class="member-card">
+{#                            <div class="member-pic"><img class="member-pic rounded-circle" src="https://randomuser.me/api/portraits/women/77.jpg"/></div>#}
+                            <div
+                                    class="msg-img"
+                                    style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)"
+                            ></div>
+                            <div class="member-card-details">
+                                <a href="#"><div class="member-name">{{ t.author.nomComplet }}</div></a>
+                                <div class="member-position">{{ t.name}}</div>
+                            </div>
+                            <div class="badge-primary"><a href="{{ path('topic', {'id': t.id}) }}"  >repondre</a></div>
+                        </div>
+                    </div>
+
+
+
+
+                    {% endfor %}
+                {% endblock %}
+
+
+

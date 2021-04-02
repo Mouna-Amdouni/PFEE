@@ -762,7 +762,16 @@ $this->entityManager->persist($association);
 
 
 
+/////////////////////////////////// *********Simple User********///////////////
+    /**
+     * @Route("/AssociationsUser", name="association_index_user", methods={"GET"})
 
-
+     */
+    public function indexUserAssociations(AssociationRepository $associationRepository): Response
+    {  $associations=$this->associationRepository->findAll();
+        return $this->render('Visiteur/associations.html.twig', [
+            'associations' => $associationRepository->findAll(),
+        ]);
+    }
 
 }

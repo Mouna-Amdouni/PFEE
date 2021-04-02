@@ -25,10 +25,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Column(type="integer")
      */
     private $id;
-    /**
-     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="utilisateur")
-     */
-    private $messages;
+
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -109,16 +106,25 @@ class User implements UserInterface, EquatableInterface
     private $associations;
 
     /**
-     * @ORM\OneToOne(targetEntity=Conversation::class, mappedBy="utilisateur", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity=Topic::class, mappedBy="author")
      */
-    private $conversation;
+    private $topics;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="idUser")
+     */
+    private $messages;
+
+
     public function __construct()
-    {        $this->messages = new ArrayCollection();
+    {
 
         $this->blogPosts = new ArrayCollection();
         $this->blogPostsCreated = new ArrayCollection();
         $this->historiques = new ArrayCollection();
         $this->associations = new ArrayCollection();
+        $this->topics = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -465,23 +471,37 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
-    public function getConversation(): ?Conversation
+
+    /**
+     * @return Collection|Topic[]
+     */
+    public function getTopics(): Collection
     {
-        return $this->conversation;
+        return $this->topics;
     }
 
-    public function setConversation(?Conversation $conversation): self
+    public function addTopic(Topic $topic): self
     {
-        $this->conversation = $conversation;
-
-        // set (or unset) the owning side of the relation if necessary
-        $newUtilisateur = null === $conversation ? null : $this;
-        if ($conversation->getUtilisateur() !== $newUtilisateur) {
-            $conversation->setUtilisateur($newUtilisateur);
+        if (!$this->topics->contains($topic)) {
+            $this->topics[] = $topic;
+            $topic->setAuthor($this);
         }
 
         return $this;
     }
+
+    public function removeTopic(Topic $topic): self
+    {
+        if ($this->topics->removeElement($topic)) {
+            // set the owning side to null (unless already changed)
+            if ($topic->getAuthor() === $this) {
+                $topic->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * @return Collection|Message[]
      */
@@ -494,7 +514,7 @@ class User implements UserInterface, EquatableInterface
     {
         if (!$this->messages->contains($message)) {
             $this->messages[] = $message;
-            $message->setUtilisateur($this);
+            $message->setIdUser($this);
         }
 
         return $this;
@@ -504,13 +524,16 @@ class User implements UserInterface, EquatableInterface
     {
         if ($this->messages->removeElement($message)) {
             // set the owning side to null (unless already changed)
-            if ($message->getUtilisateur() === $this) {
-                $message->setUtilisateur(null);
+            if ($message->getIdUser() === $this) {
+                $message->setIdUser(null);
             }
         }
 
         return $this;
     }
+
+
+
 
 
 }

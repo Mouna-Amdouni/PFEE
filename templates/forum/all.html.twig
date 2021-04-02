@@ -1,0 +1,16 @@
+{% extends "admin/bars.html.twig" %}
+{% block contenpage %}
+<h1>bnj {{ app.user.id }}</h1>
+
+{% for t in topics  %}
+
+    {% if ( t.author is same  as app.user ) %}
+        <td><a href="{{ path('topic', {'id': t.id}) }}"  >
+
+        <h1>{{ t.name }}</h1></a>
+{% endif %}
+
+
+
+{% endfor %}
+{% endblock %}
