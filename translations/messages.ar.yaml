@@ -35,7 +35,7 @@ backend:
     modifier: Modifier
     status: Etat ?
     password: Mot de passe
-    cancel: Annuler
+    cancel: رجوع
     register: Enregistrer
     changer_password: Changer de mot de passe
     changer_my_password: Changer mon mot de passe

@@ -38,12 +38,13 @@
 		<div class="login_wrapper">
 			<div class="animate form login_form">
 				<section class="login_content">
+					<img 
 					<form method="post">
 						<h1>Connexion</h1>
 												<h1>
-													<a class="reset_pass" href="{{path('register')}}">Creer un compte</a>
+													<a class="reset_pass" href="{{path('register')}}">Créer un compte</a>
 
-													{#													{{ "backend.login.create_acount"|trans }}#}
+													{#	{{ "backend.login.create_acount"|trans }}#}
 												</h1>
 						<div>
 							<input type="text" value="{{ last_username }}" name="username" id="inputText" class="form-control" placeholder="Username" required autofocus>
@@ -52,11 +53,14 @@
 							<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
 							<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 						</div>
-						<div>
+						<div style="float : left">
 							<input type="checkbox" class="" name="_remember_me"><span>Remember me</span>
 						</div>
-						<div>
-{#							<button class="btn btn-success submit" href="index.html">Log in</button>#}
+						</br>
+						</br>
+						</br>
+						<div style="float : left">
+						{#<button class="btn btn-success submit" href="index.html">Log in</button>#}
 							<button class="btn btn-success submit" > Log in</button>
 
 							<a class="reset_pass" href="{{path('app_forgot_password_request')}}">Lost your password?</a>
@@ -74,12 +78,10 @@
 							<br/>
 
 							<div>
-								<h1>
-									<i class="fa fa-paw"></i>
-									ADMIN PANEL</h1>
+								
 								<p>©{{ "now"|date("Y") }}
 									{{ "backend.login.all_rights"|trans }}
-									<a target="_blank" href="//example.com">example.com<a/></p>
+									<a target="_blank" href="https://www.smartictunisie.com/">www.smartictunisie.com<a/></p>
 								</p>
 							</div>
 						</div>
